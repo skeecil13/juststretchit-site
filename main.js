@@ -21,7 +21,7 @@
     });
   }
 
-  /* --------------------------------------------- Contact form (FormSubmit) */
+  /* ---------------------------------------------- Contact form (Formspree) */
   var form = document.getElementById("contactForm");
   if (form) {
     var btn = document.getElementById("formSubmit");
@@ -35,25 +35,17 @@
       if (btn) btn.disabled = true;
       if (label) label.textContent = "Sending…";
 
-      var payload = {
-        name: form.name.value,
-        email: form.email.value,
-        phone: form.phone.value,
-        message: form.message.value,
-        _subject: "Website inquiry from " + (form.name.value || "a visitor"),
-        _template: "table",
-      };
+      // FormData + Accept alone keeps this a CORS "simple" request — no preflight.
+      var data = new FormData(form);
+      data.append("_subject", "Website inquiry from " + (form.name.value || "a visitor"));
 
       fetch(form.action, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload),
+        headers: { Accept: "application/json" },
+        body: data,
       })
         .then(function (r) {
           if (!r.ok) throw new Error("bad status");
-          return r.json();
-        })
-        .then(function () {
           form.hidden = true;
           if (successEl) successEl.hidden = false;
         })

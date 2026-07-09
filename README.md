@@ -12,7 +12,7 @@ as static files to any static host (GitHub Pages, Netlify, Cloudflare Pages, …
 index.html      All page sections (header, hero, trust bar, first-stretch CTA,
                 about, sessions, packages, testimonials, contact, footer).
 styles.css      Design-system tokens + component styles (Button, Card, Badge, …).
-main.js         Mobile nav toggle + contact-form submit (posts to FormSubmit).
+main.js         Mobile nav toggle + contact-form submit (posts to Formspree).
 assets/         Logos (green/white/plum) and studio photography.
 fonts/          Afterglow-Regular.ttf (brand display serif).
 ```
@@ -23,10 +23,20 @@ Icons are inlined **Lucide** SVGs (no runtime CDN dependency).
 ## Booking & contact
 
 - Every booking button deep-links to the studio's **Vagaro** pages (open in a new tab).
-- The contact form posts directly to `sharifa@juststretchitfm.com` via
-  [FormSubmit](https://formsubmit.co) — no server required.
-  **First-time activation:** the very first submission triggers a one-time confirmation
-  email from FormSubmit to that address; click the link in it once to start delivery.
+- The contact form posts to [Formspree](https://formspree.io) (form `xnjkenqa`), which
+  emails submissions to `sharifa@juststretchitfm.com` — no server required.
+  Submitted with a plain `fetch` + `FormData` and only an `Accept: application/json`
+  header. Both are CORS-safelisted, so the browser sends the `POST` directly with no
+  preflight `OPTIONS` — one less thing to fail. We deliberately do **not** use the
+  `@formspree/ajax` CDN library: it would add a runtime CDN dependency and a second
+  point of failure.
+  Without JS the form still works, degrading to a native POST and Formspree's own
+  thank-you page.
+  `_gotcha` is Formspree's honeypot: hidden from users, filled by bots, silently dropped.
+
+  **Domain email:** delivery depends on `juststretchitfm.com` having MX records
+  (`smtp.google.com`, priority 1) for Google Workspace. Without them the domain cannot
+  receive mail and *no* form provider will work, however healthy it looks.
 
 ## Run locally
 

@@ -117,6 +117,9 @@
 
 /* ---------------------------------------------------------------- Reset */
 *, *::before, *::after { box-sizing: border-box; }
+/* Any author `display` beats the UA sheet's [hidden] rule, so `el.hidden = true`
+   silently fails on styled elements (e.g. .contact-form). Restore it. */
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; scroll-padding-top: 84px; }
 body {
   margin: 0;
